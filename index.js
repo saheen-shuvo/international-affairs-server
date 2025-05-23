@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // Middleware
 app.use(cors());
@@ -27,6 +27,9 @@ async function run() {
 
     const usersCollection = client.db("iaDB").collection("users");
     const contactsCollection = client.db("iaDB").collection("contacts");
+    const erasmusExchangesCollection = client
+      .db("iaDB")
+      .collection("erasmusExchanges");
 
     // GET ALL USERS
     app.get("/users", async (req, res) => {
@@ -54,6 +57,28 @@ async function run() {
     app.get("/contacts", async (req, res) => {
       const result = await contactsCollection.find().toArray();
       res.send(result);
+    });
+
+    // GET ALL ERASMUS EXCHANGES
+    app.get("/erasmus-exchanges", async (req, res) => {
+      const result = await erasmusExchangesCollection.find().toArray();
+      res.send(result);
+    });
+
+    // GET SINGLE ERASMUS EXCHANGE BY ID
+    app.get("/erasmus-exchanges/:id", async (req, res) => {
+      const id = req.params.id;
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await erasmusExchangesCollection.findOne(query);
+        if (result) {
+          res.send(result);
+        } else {
+          res.status(404).send({ message: "Erasmus exchange not found" });
+        }
+      } catch (error) {
+        res.status(500).send({ message: "Error fetching data", error });
+      }
     });
 
     // Send a ping to confirm a successful connection
