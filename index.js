@@ -30,6 +30,9 @@ async function run() {
     const erasmusExchangesCollection = client
       .db("iaDB")
       .collection("erasmusExchanges");
+    const programsAndExchangesCollection = client
+      .db("iaDB")
+      .collection("programsAndExchanges");
 
     // GET ALL USERS
     app.get("/users", async (req, res) => {
@@ -60,21 +63,60 @@ async function run() {
     });
 
     // GET ALL ERASMUS EXCHANGES
-    app.get("/erasmus-exchanges", async (req, res) => {
-      const result = await erasmusExchangesCollection.find().toArray();
+    // app.get("/erasmus-exchanges", async (req, res) => {
+    //   const result = await erasmusExchangesCollection.find().toArray();
+    //   res.send(result);
+    // });
+
+    // GET ALL PROGRAMS AND EXCHANGES EXCHANGES
+    app.get("/programs-exchanges", async (req, res) => {
+      const result = await programsAndExchangesCollection.find().toArray();
       res.send(result);
     });
 
     // GET SINGLE ERASMUS EXCHANGE BY ID
-    app.get("/erasmus-exchanges/:id", async (req, res) => {
-      const id = req.params.id;
+    // app.get("/erasmus-exchanges/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   try {
+    //     const query = { _id: new ObjectId(id) };
+    //     const result = await erasmusExchangesCollection.findOne(query);
+    //     if (result) {
+    //       res.send(result);
+    //     } else {
+    //       res.status(404).send({ message: "Erasmus exchange not found" });
+    //     }
+    //   } catch (error) {
+    //     res.status(500).send({ message: "Error fetching data", error });
+    //   }
+    // });
+
+    // GET SPECIFIC TYPE PROGRAMS
+    app.get("/programs-exchanges/:programType", async (req, res) => {
+      const programType = req.params.programType;
       try {
-        const query = { _id: new ObjectId(id) };
-        const result = await erasmusExchangesCollection.findOne(query);
+        const result = await programsAndExchangesCollection
+          .find({ programType })
+          .toArray();
+
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Server error", error });
+      }
+    });
+
+    // GET SINGLE PROGRAM AND EXCHANGE BY ID
+    app.get("/programs-exchanges/:programType/:id", async (req, res) => {
+      const { programType, id } = req.params;
+      try {
+        const query = {
+          _id: new ObjectId(id),
+          programType: programType,
+        };
+        const result = await programsAndExchangesCollection.findOne(query);
         if (result) {
           res.send(result);
         } else {
-          res.status(404).send({ message: "Erasmus exchange not found" });
+          res.status(404).send({ message: "Program not found" });
         }
       } catch (error) {
         res.status(500).send({ message: "Error fetching data", error });
