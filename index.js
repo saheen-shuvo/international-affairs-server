@@ -27,12 +27,8 @@ async function run() {
 
     const usersCollection = client.db("iaDB").collection("users");
     const contactsCollection = client.db("iaDB").collection("contacts");
-    const erasmusExchangesCollection = client
-      .db("iaDB")
-      .collection("erasmusExchanges");
-    const programsAndExchangesCollection = client
-      .db("iaDB")
-      .collection("programsAndExchanges");
+    const erasmusExchangesCollection = client.db("iaDB").collection("erasmusExchanges");
+    const programsAndExchangesCollection = client.db("iaDB").collection("programsAndExchanges");
 
     // GET ALL USERS
     app.get("/users", async (req, res) => {
@@ -124,10 +120,10 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
